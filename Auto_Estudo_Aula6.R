@@ -35,7 +35,13 @@ grafRendaGastos = ggplot(tabelaRendaBR,
                          aes(x = `Renda Nacional Liquida Ajustada Per Capita (% cresc. anual)`,
                              y = `Gastos Consumo Final (% cresc. anual)`)) +
   geom_point() +
-  geom_smooth()
+  geom_smooth() +
+  labs(
+    x = "Renda Nacional Liquida Per Capita",
+    y = "Gastos Finais (% do PIB)",
+    title = "Relação entre Renda Per Capita e Consumo Final",
+    subtitle = "Entre 1975 e 2021"
+  )
 
 ggplotly(grafRendaGastos)
 
@@ -44,13 +50,26 @@ grafRendaPoupanca = ggplot(tabelaRendaBR,
                          aes(x = `Renda Nacional Liquida Ajustada Per Capita`,
                              y = `Poupanca Bruta (% do PIB)`)) +
   geom_point() +
-  geom_smooth()
+  geom_smooth() +
+  labs(
+    x = "Renda Nacional Liquida Per Capita",
+    y = "Poupança Bruta (% do PIB)",
+    title = "Relação entre Renda Per Capita e Poupança",
+    subtitle = "Entre 1975 e 2021",
+    
+  )
 
 # Verificando o aumento da renda no Brasil por ano
 grafRendaAno = ggplot(tabelaRendaBR,
                       aes(x = year,
                           y = `Renda Nacional Liquida Ajustada Per Capita`)) +
   geom_col() +
+  labs(
+    x = "Ano",
+    y = "Renda Nacional Liquida Per Capita",
+    title = "Renda Nacional Liquida Per Capita",
+    subtitle = "Entre 1975 e 2021"
+  )
   # destacando o periodo de 1994 ate 2021 (periodo plano real)
   gghighlight(year >= 1994)
 

@@ -24,10 +24,6 @@ dfRenda = WDI(indicator = vetorCodigos, country = "all")
 dfRenda2023 = WDI(indicator = vetorCodigos, country = "all",
                       start = 2023, end = 2023)
 
-# SERIE TEMPORAL
-dfRendaBR = WDI(indicator = vetorCodigos, country = "BR",
-                    start = 1975, end = 2021)
-
 # SERIE TEMPORAL MERCOSUL
 dfRendaMercosul = WDI(indicator = vetorCodigos, country = vetorMercosul,
                           start = 1975, end = 2021)

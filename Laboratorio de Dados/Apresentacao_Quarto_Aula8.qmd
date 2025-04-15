@@ -1,5 +1,5 @@
 ---
-title: "Análise dos Dados do Banco Mundial"
+title: "Análise de Indicadores do Banco Mundial"
 format: html
 editor: visual
 ---
@@ -75,7 +75,8 @@ Esses dados foram analisados em três formatos: série histórica na América La
 
 ## Grafico dos Dados em Painel WDI
 
-Falar sobre o gráfico
+-   **Índice de Gini ao longo do tempo**\
+    Mostra a evolução da desigualdade de renda (medida pelo Índice de Gini) em três países da América Latina: Brasil, Argentina e México. O objetivo é comparar como a desigualdade tem mudado ao longo dos anos em cada país.
 
 ```{r}
 #| label: Gráfico dos Dados em Painel
@@ -100,7 +101,8 @@ ggplot(df_plot1, aes(x = year, y = gini_index, color = country)) +
 
 ## Grafico do Corte Transversal WDI
 
-Falar sobre o gráfico
+-   **Desemprego jovem em 2023**\
+    Apresenta os 10 países com as maiores taxas de desemprego entre jovens (15–24 anos) no ano de 2023. Ajuda a identificar onde esse grupo enfrenta maiores dificuldades no mercado de trabalho.
 
 ```{r}
 #| label: Gráfico do Corte Transversal
@@ -127,7 +129,8 @@ ggplot(df_plot2, aes(x = reorder(country, unemployment_youth_pct), y = unemploym
 
 ## Grafico da Série Temporal WDI
 
-Falar sobre o gráfico
+**Pobreza extrema no Brasil (série histórica)**\
+Mostra como evoluiu a porcentagem da população brasileira vivendo em pobreza extrema desde 1960. O gráfico permite visualizar tendências de redução ou aumento ao longo das décadas.
 
 ```{r}
 #| label: Gráfico da Série Temporal

@@ -1,9 +1,12 @@
-# WEBSITES DE AJUDA
-# https://ggplot2.tidyverse.org/reference/ggtheme.html
-# https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/#axes
-# https://pt.r4ds.hadley.nz/layers.html
-# https://r-graph-gallery.com/
-# https://rstudio.github.io/cheatsheets/data-visualization.pdf
+---
+title: "Bruno Thiago Tomio"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: load-packages # nomes únicos
+#| include: false # não inclui o resultado no doc
 
 library(tidyverse)
 library(WDI)
@@ -42,8 +45,20 @@ df_energia_transversal = WDI(country = "all", indicator = vetor_codigos,
 lista_iso3c = codelist %>%
   select(continent, iso3c) %>%
   drop_na(iso3c)
+```
 
-# arrumandos os dados para os gráficos
+## VARIÁVEL
+
+Falar sobre sua variável.
+
+## GRÁFICO COM DADOS EM PAINEL
+
+Falar sobre o gráfico com dados em painel.
+
+```{r}
+#| label: dadosempainel
+#| warning: false
+#| echo: false
 
 #==============================
 # GRÁFICO DOS DADOS EM PAINEL
@@ -59,8 +74,6 @@ df_energia_painel_graf = df_energia_painel %>%
             media_consumo = mean(`Consumo de energia (Kwh per capita)`),
             media_exposicao = mean(`Exposicao Media a PM2.5`)) # calculando media para cada variável
 
-# criando funcao graf_painel para facilitar a a criacao dos graficos de cada
-# variavel dos dados em painel
 graf_painel = function(df, x, y, xlabel, ylabel){
   ggplot(df, 
          aes(x = {{x}}, y = {{y}})) +
@@ -104,6 +117,17 @@ ggarrange(graf_painel_acesso_consumo,
                     ncol = 2),
           nrow = 2)
 
+```
+
+## GRÁFICO COM SÉRIE TEMPORAL
+
+Falar sobre o gráfico com dados de corte tranversal.
+
+```{r}
+#| label: serietemporal
+#| warning: false
+#| echo: false
+
 #==============================
 # GRÁFICO DA SERIE TEMPORAL
 #==============================
@@ -139,7 +163,21 @@ graf_temporal_consumo = graf_temporal(df_energia_temporal_graf,
 # colocando os tres gráficos criados em apenas um painel
 ggarrange(graf_temporal_exposicao, graf_temporal_consumo,
           ncol = 1, nrow = 2)
-  
+
+```
+
+## GRÁFICO COM CORTE TRANSVERSAL
+
+Falar sobre o gráfico com dados de série temporal.
+
+```         
+```
+
+```{r}
+#| label: cortetransversal
+#| warning: false
+#| echo: false
+
 #==============================
 # GRÁFICO DO CORTE TRANSVERSAL
 #==============================
@@ -182,6 +220,4 @@ graf_transversal_acesso = graf_transversal(world,
 # colocando os tres gráficos criados em apenas um painel
 ggarrange(graf_transversal_exposicao, graf_transversal_consumo, graf_transversal_acesso,
           ncol = 1, nrow = 3)
-
-  
-  
+```

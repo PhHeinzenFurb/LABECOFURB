@@ -1,17 +1,22 @@
-# WEBSITES DE AJUDA
-# https://ggplot2.tidyverse.org/reference/ggtheme.html
-# https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/#axes
-# https://pt.r4ds.hadley.nz/layers.html
-# https://r-graph-gallery.com/
-# https://rstudio.github.io/cheatsheets/data-visualization.pdf
+---
+title: "Análise de Energia e Poluição"
+author: "Pedro Henrique Heinzen"
+bibliography: referencias.bib
+format: html
+editor: visual
+---
 
-library(tidyverse) # biblioteca para modelagem dos dados
-library(WDI) # biblioteca para extracao dados WDI
-library(countrycode) # biblioteca com codigos dos paises
-library(ggpubr) # biblioteca para utilizar ggarrange()
-library(sf) # le e codifica dados geograficos
-library(rnaturalearth) # dados de pontos geograficos do mundo
-library(rnaturalearthdata) # dados de pontos geograficos do mundo
+```{r}
+#| label: load-packages # nomes únicos
+#| include: false # não inclui o resultado no doc
+
+library(tidyverse)
+library(WDI)
+library(countrycode)
+library(ggpubr)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
 
 # vetor dos indicadores que serao utilizados no trabalho
 # e que ja estao com as colunas nomeadas
@@ -42,8 +47,29 @@ df_energia_transversal = WDI(country = "all", indicator = vetor_codigos,
 lista_iso3c = codelist %>%
   select(continent, iso3c) %>%
   drop_na(iso3c)
+```
 
-# arrumandos os dados para os gráficos
+## VARIÁVEIS
+
+Foram utilizadas três variáveis na presente apresentação:
+
+-   **Acesso a Combustíveis e Tecnologias Limpas Para Cozimento (% da população)** (`EG.CFT.ACCS.ZS`)\
+-   **Consumo de Energia Elétrica (kWh per capita)** (`EG.USE.ELEC.KH.PC`)\
+-   **Exposição Anual à Poluição por PM2.5 (microgramas por metro cúbico)** (`EN.ATM.PM25.MC.M3`)\
+
+Os dados foram obtidos a partir dos indicadores de desenvolvimento do Banco Mundial [@worldbank_wdi].
+
+## GRÁFICO COM DADOS EM PAINEL
+
+A partir dos dados em painel, foi escolhido realizar uma breve análise da correlação entre entre as três variáveis escolhidas. A partir delas podemos verificar:
+
+-   **A.** Há uma relação positiva entre **Consumo Elétrico Per Capita** e **Acesso a Fontes e Combustíveis Limpos**;\
+-   **B.** Há uma relação negativa entre **Exposição a PM2.5** e **Consumo Elétrico Per Capita**, e também negativa da primeira com **Acesso a Fontes e Combustíveis Limpos**.
+
+```{r}
+#| label: dadosempainel
+#| warning: false
+#| echo: false
 
 #==============================
 # GRÁFICO DOS DADOS EM PAINEL
@@ -59,8 +85,6 @@ df_energia_painel_graf = df_energia_painel %>%
             media_consumo = mean(`Consumo de energia (Kwh per capita)`),
             media_exposicao = mean(`Exposicao Media a PM2.5`)) # calculando media para cada variável
 
-# criando funcao graf_painel para facilitar a a criacao dos graficos de cada
-# variavel dos dados em painel
 graf_painel = function(df, x, y, xlabel, ylabel){
   ggplot(df, 
          aes(x = {{x}}, y = {{y}})) +
@@ -95,14 +119,25 @@ graf_painel_acesso_exposicao = graf_painel(df_energia_painel_graf,
 graf_painel_consumo_exposicao = graf_painel(df_energia_painel_graf,
                                             media_consumo, 
                                             media_exposicao,
-                                            "Média do Acesso a Fontes Limpas para Cozimento",
-                                            "Média de Consumo Elétrico Per Capita")
+                                            "Média de Consumo Elétrico Per Capita",
+                                            "Média de Exposição a PM2.5")
  
 # colocando os tres gráficos criados em apenas um painel
 ggarrange(graf_painel_acesso_consumo, 
           ggarrange(graf_painel_acesso_exposicao, graf_painel_consumo_exposicao,
                     ncol = 2),
           nrow = 2)
+
+```
+
+## GRÁFICO COM SÉRIE TEMPORAL
+
+O Brasil foi escolhido para a realização da extração dos dados da série temporal e subsequente criação dos gráficos. Logo abaixo temos dois visuais demonstrando a evolução no país da **Exposição a PM2.5** e também do **Consumo Elétrico Per Capita**.
+
+```{r}
+#| label: serietemporal
+#| warning: false
+#| echo: false
 
 #==============================
 # GRÁFICO DA SERIE TEMPORAL
@@ -139,7 +174,18 @@ graf_temporal_consumo = graf_temporal(df_energia_temporal_graf,
 # colocando os tres gráficos criados em apenas um painel
 ggarrange(graf_temporal_exposicao, graf_temporal_consumo,
           ncol = 1, nrow = 2)
-  
+
+```
+
+## GRÁFICO COM CORTE TRANSVERSAL
+
+Para a série temporal foi feito o corte do ano de 2020 para as três variáveis. A análise escolhida propõe a verificação do comportamento do **Acesso a Fontes e Combustíveis Limpos**, **Consumo Elétrico Per Capita** e **Exposição a PM2.5** nas diferentes regiões do mundo.
+
+```{r}
+#| label: cortetransversal
+#| warning: false
+#| echo: false
+
 #==============================
 # GRÁFICO DO CORTE TRANSVERSAL
 #==============================
@@ -160,7 +206,7 @@ graf_transversal = function(df, x, title){
     theme_void() +
     guides(fill = guide_colorbar(title = NULL)) +
     labs(title = title) +
-    theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold"))
+    theme(plot.title = element_text(hjust = 0.5, size = 10, face = "bold"))
 }
 
 # realizando left_join para combinar as tabelas
@@ -170,14 +216,14 @@ world = world %>%
 
 # mapa para exposicao ao pm2.5
 graf_transversal_exposicao = graf_transversal(world, `Exposicao Media a PM2.5`,
-                                              "Exposição Média a PM2.5(microgramas por metro cubico)")
+                                              "Exposição Média a PM2.5 - 2020")
 # mapa para o consumo de energia
 graf_transversal_consumo = graf_transversal(world, `Consumo de energia (Kwh per capita)`,
-                                            "Consumo de energia (Kwh per capita)")
+                                            "Consumo de energia  - 2020")
 # mapa para o acesso a fontes limpas
 graf_transversal_acesso = graf_transversal(world, 
                                            `% Acesso a tecnologias e combustiveis limpos para cozimento`,
-                                           "% Acesso a tecnologias e combustiveis limpos para cozimento")
+                                           "% Acesso a tecnologias e combustiveis limpos para cozimento - 2020")
 
 # colocando os tres gráficos criados em apenas um painel
 ggarrange(graf_transversal_acesso, 
@@ -185,4 +231,4 @@ ggarrange(graf_transversal_acesso,
                     ncol = 2),
           nrow = 2)
   
-  
+```

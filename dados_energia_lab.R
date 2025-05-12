@@ -54,7 +54,7 @@ df_energia_painel_graf = df_energia_painel %>%
   inner_join(lista_iso3c, join_by(iso3c)) %>% # inner_join com lista_iso3c para captar apenas os paises
   drop_na(`Consumo de energia (Kwh per capita)`, `Exposicao Media a PM2.5`,
           `% Acesso a tecnologias e combustiveis limpos para cozimento`) %>% # removendo os valores NA
-  group_by(year) %>% # agrupando por ano e continente
+  group_by(year) %>% # agrupando por ano
   summarise(media_acesso = mean(`% Acesso a tecnologias e combustiveis limpos para cozimento`),
             media_consumo = mean(`Consumo de energia (Kwh per capita)`),
             media_exposicao = mean(`Exposicao Media a PM2.5`)) # calculando media para cada variável

@@ -49,19 +49,21 @@ lista_iso3c = codelist %>%
   drop_na(iso3c)
 ```
 
-## VARIÁVEIS
+## INTRODUÇÃO
 
-Foram utilizadas três variáveis na presente apresentação:
+A ideia para esta apresentação surgiu a partir de um breve trecho do livro Abundância, de Ezra Klein e Derek Thompson, onde citam o falecido demógrafo Hans Rosling. Os autores mostram que:
+
+> Em 2010, ele argumentou que você poderia agrupar a humanidade pela energia à qual as pessoas tinham acesso. Na época, cerca de 2 bilhões de pessoas tinham pouco ou nenhum acesso à eletricidade e ainda cozinhavam alimentos e esquentavam água pelo fogo. Cerca de 3 bilhões tinham acesso a eletricidade suficiente para alimentar luzes elétricas. Um bilhão adicional ou mais tinha energia e riqueza para aparelhos que economizavam o trabalho, como máquinas de lavar. \[...\] A energia é o núcleo da riqueza. ([@abundance], p. 69)
+
+Será o foco deste trabalho uma breve análise de três visualizações que fazem referência à parcela da população que possuem acesso à fontes limpas para cozimento e analisa-la no contexto do consumo elétrico per capita e exposição a PM2.5. Para tanto, foram utilizadas três variáveis obtidas através dos indicadores de desenvolvimento do Banco Mundial [@worldbank_wdi]:
 
 -   **Acesso a Combustíveis e Tecnologias Limpas Para Cozimento (% da população)** (`EG.CFT.ACCS.ZS`)\
 -   **Consumo de Energia Elétrica (kWh per capita)** (`EG.USE.ELEC.KH.PC`)\
 -   **Exposição Anual à Poluição por PM2.5 (microgramas por metro cúbico)** (`EN.ATM.PM25.MC.M3`)\
 
-Os dados foram obtidos a partir dos indicadores de desenvolvimento do Banco Mundial [@worldbank_wdi].
+## CORRELAÇÃO ENTRE AS VARIÁVEIS DE 2000 À 2020 (DADOS EM PAINEL)
 
-## GRÁFICO COM DADOS EM PAINEL
-
-A partir dos dados em painel, foi escolhido realizar uma breve análise da correlação entre entre as três variáveis escolhidas. A partir delas podemos verificar:
+A partir do agrupamento por ano das médias de cada uma das variáveis escolhidas para a análise foram geradas visualizações demonstrando a evolução da correlação entre elas durante o período entre 2000 e 2020. Podemos verificar que:
 
 -   **A.** Há uma relação positiva entre **Consumo Elétrico Per Capita** e **Acesso a Fontes e Combustíveis Limpos**;\
 -   **B.** Há uma relação negativa entre **Exposição a PM2.5** e **Consumo Elétrico Per Capita**, e também negativa da primeira com **Acesso a Fontes e Combustíveis Limpos**.
@@ -97,7 +99,7 @@ graf_painel = function(df, x, y, xlabel, ylabel){
           axis.text.y = element_blank(),
           axis.ticks.x = element_blank(),
           axis.text.x = element_blank(),
-          axis.title = element_text(size = 8, face = "bold"))
+          axis.title = element_text(size = 9, face = "bold"))
 }
 
 # criando gráfico para verificar correlacao entre acesso e consumo
@@ -130,7 +132,7 @@ ggarrange(graf_painel_acesso_consumo,
 
 ```
 
-## GRÁFICO COM SÉRIE TEMPORAL
+## EVOLUÇÃO DAS VARIÁVEIS NO BRASIL (SÉRIE TEMPORAL)
 
 O Brasil foi escolhido para a realização da extração dos dados da série temporal e subsequente criação dos gráficos. Logo abaixo temos dois visuais demonstrando a evolução no país da **Exposição a PM2.5** e também do **Consumo Elétrico Per Capita**.
 
@@ -177,9 +179,9 @@ ggarrange(graf_temporal_exposicao, graf_temporal_consumo,
 
 ```
 
-## GRÁFICO COM CORTE TRANSVERSAL
+## COMPORTAMENTO DAS VARIÁVEIS NO GLOBO PARA O ANO DE 2020 (CORTE TRANSVERSAL)
 
-Para a série temporal foi feito o corte do ano de 2020 para as três variáveis. A análise escolhida propõe a verificação do comportamento do **Acesso a Fontes e Combustíveis Limpos**, **Consumo Elétrico Per Capita** e **Exposição a PM2.5** nas diferentes regiões do mundo.
+Para o corte transversal foi feito o corte do ano de 2020 para as três variáveis. A análise escolhida propõe a verificação do comportamento do **Acesso a Fontes e Combustíveis Limpos**, **Consumo Elétrico Per Capita** e **Exposição a PM2.5** nas diferentes regiões do mundo.
 
 ```{r}
 #| label: cortetransversal

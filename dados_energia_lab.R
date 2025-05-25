@@ -5,7 +5,7 @@
 # https://r-graph-gallery.com/
 # https://rstudio.github.io/cheatsheets/data-visualization.pdf
 
-library(tidyverse) # biblioteca para modelagem dos dados
+library(tidyverse) # biblioteca para modelagem dos dados a
 library(WDI) # biblioteca para extracao dados WDI
 library(countrycode) # biblioteca com codigos dos paises
 library(ggpubr) # biblioteca para utilizar ggarrange()

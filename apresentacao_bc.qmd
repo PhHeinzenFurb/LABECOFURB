@@ -1,0 +1,149 @@
+---
+title: "apresentacao"
+author: "eu"
+format: html
+server: shiny
+---
+
+
+
+```{r}
+#| context: setup
+#| warning: false
+#| include: false
+
+library(GetBCBData)
+library(tidyverse)
+library(lubridate)
+library(bslib)
+
+# FUNÇÃO PARA EXTRAIR OS DADOS DO BCB VIA BIBLIOTECA GetBCBData
+get_bcb_data <- function(id, first_date){
+  gbcbd_get_series(
+    id = id,
+    first.date = first_date,
+    last.date = Sys.Date(),
+    format.data = "long",
+    use.memoise = TRUE,
+    cache.path = tempdir(),
+    do.parallel = FALSE
+  )
+}
+
+# ids pra os dados de saldo de operações de crédito para os estados
+ids_saldos_estados <- c("AC" = 14002, "AP" = 14004, "AM" = 14005, "PA" = 14015, 
+                        "RO" = 14023, "RR" = 14024, "TO" = 14028, "AL" = 14003, 
+                        "BA" = 14006, "CE" = 14007, "MA" = 14011, "PB" = 14016, 
+                        "PE" = 14018, "PI" = 14019, "RN" = 14021, "SE" = 14027, 
+                        "GO" = 14010, "DF" = 14008, "MT" = 14012, "MS" = 14013, 
+                        "ES" = 14009, "MG" = 14014, "RJ" = 14020, "SP" = 14026, 
+                        "SC" = 14025, "PR" = 14017, "RS" = 14022)
+
+# ids pra os dados de saldo de operações de crédito para os estados
+ids_inad_estados <- c("AC" = 15861, "AP" = 15863, "AM" = 15864, "PA" = 15874, 
+                      "RO" = 15882, "RR" = 15883, "TO" = 15887, "AL" = 15862, 
+                      "BA" = 15865, "CE" = 15866, "MA" = 15870, "PB" = 15875, 
+                      "PE" = 15877, "PI" = 15878, "RN" = 15880, "SE" = 15886, 
+                      "GO" = 15869, "DF" = 15867, "MT" = 15871, "MS" = 15872, 
+                      "ES" = 15868, "MG" = 15873, "RJ" = 15879, "SP" = 15885, 
+                      "SC" = 15884, "PR" = 15876, "RS" = 15881)
+
+# extraindo os dados do Banco Central
+df_saldosCredito <- get_bcb_data(ids_saldos_estados, "2020-01-01")
+df_inadCredito <- get_bcb_data(ids_inad_estados, "2020-01-01")
+
+# criando df com as informações dos estados e regioes
+series.name <- c("AC", "AP", "AM", "PA", "RO", "RR", "TO", "AL", "BA", "CE", "MA", 
+                 "PB", "PE", "PI", "RN", "SE", "GO", "DF", "MT", "MS", "ES", "MG",
+                 "RJ", "SP", "SC", "PR", "RS")
+
+regioes <- c("Norte","Norte","Norte","Norte","Norte","Norte","Norte","Nordeste",
+             "Nordeste","Nordeste","Nordeste","Nordeste","Nordeste","Nordeste",
+             "Nordeste","Nordeste","Centro Oeste","Centro Oeste","Centro Oeste",
+             "Centro Oeste","Sudeste","Sudeste","Sudeste","Sudeste","Sul","Sul",
+             "Sul")
+
+df_estados_regioes <- data.frame(series.name, regioes)
+
+# renomeando colunas
+df_saldosCredito <- df_saldosCredito |>
+  rename(saldoCredito = value)
+
+df_inadCredito <- df_inadCredito |>
+  rename(inadCredito = value)
+
+# juntado saldosCredito e inadCredito
+df_saldosInadCredito <- df_saldosCredito |>
+  left_join(df_inadCredito, by = c("series.name", "ref.date"))
+
+# juntado com df_estados_regioes para atrair as regioes de cada estado
+df_saldosInadCredito <- df_saldosInadCredito |>
+  left_join(df_estados_regioes, by = "series.name") |>
+  mutate(
+    ano = year(ref.date),
+    mes = month(ref.date)
+  ) |>
+  filter(mes == 12)
+```
+
+```{r}
+layout_sidebar(
+  sidebar = sidebar(
+    shiny::selectizeInput(
+      "select_regioes",
+      "regioes_destacadas",
+      choices = c("Centro Oeste", "Nordeste", "Norte", "Sudeste", "Sul"),
+      selected = c("Centro Oeste", "Nordeste", "Norte", "Sudeste", "Sul"),
+      multiple = TRUE
+    ),
+    shiny::selectInput(
+      "ano",
+      "Selecione o ano",
+      choices = seq(2020, 2024),
+      selected = 2024
+    )
+  ),
+  shiny::plotOutput("output_plot")
+)
+```
+
+```{r}
+#| context: server
+
+output$output_plot <- shiny::renderPlot({
+  df_saldosInadCredito |>
+    dplyr::filter(
+      regioes %in% input$select_regioes,
+      ano == input$ano
+      ) |>
+    ggplot(
+      aes(
+        x = saldoCredito,
+        y = inadCredito,
+        fill = regioes
+      )
+    ) +
+    geom_point(
+      shape = 21,
+      size = 6, 
+      col = "black"
+    ) +
+    labs(
+      x = "Saldo das Operações de Crédito",
+      y = "Taxa de Inadimplência nas Operações de Crédito",
+      fill = "Regiões",
+      title = "Operações de Crédito e Inadimplência no Brasil (2020 - 2024)"
+    ) +
+    theme_minimal() +
+    scale_fill_manual(
+      values = c(
+        `Centro Oeste` = "#D81B60",
+        Norte = "#1E88E5",
+        Nordeste = "#FFC107",
+        Sudeste = "#004D40",
+        Sul = "#E66100"
+      )
+    ) 
+})
+```
+
